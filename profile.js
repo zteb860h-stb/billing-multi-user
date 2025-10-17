@@ -269,6 +269,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         avatarUploadInput.addEventListener('change', handlePhotoUpload);
     }
     
+    // Event listener untuk Laporan card
+    const laporanCard = document.getElementById('laporan-card');
+    if (laporanCard) {
+        laporanCard.addEventListener('click', () => {
+            window.location.href = 'laporan.html';
+        });
+    }
+    
+    // Note: Event listeners untuk Pengaturan Aplikasi dan Metode Pembayaran 
+    // sudah di-handle oleh app-settings.js dan payment-methods.js
+    // Tidak perlu duplicate di sini.
+    
     // --- Initial Load ---
     await loadUserProfile();
 });
