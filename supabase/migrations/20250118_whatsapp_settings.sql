@@ -139,3 +139,8 @@ COMMENT ON TABLE public.whatsapp_settings IS 'Stores WhatsApp notification templ
 COMMENT ON COLUMN public.whatsapp_settings.setting_key IS 'Unique key for the setting';
 COMMENT ON COLUMN public.whatsapp_settings.setting_value IS 'Template or setting value';
 COMMENT ON COLUMN public.whatsapp_settings.is_enabled IS 'Whether this setting/template is enabled';
+
+-- Hanya insert fonnte_token
+INSERT INTO public.whatsapp_settings (setting_key, setting_value, is_enabled) 
+VALUES ('fonnte_token', '', true)
+ON CONFLICT (setting_key) DO NOTHING;
