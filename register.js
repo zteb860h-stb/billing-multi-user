@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 options: {
                     // This will only work if email confirmation is disabled in Supabase dashboard
                     // Settings > Authentication > Email Auth > Confirm email = OFF
+                    emailRedirectTo: window.location.origin + '/dashboard.html',
                     data: {
                         full_name: fullName
                     }
