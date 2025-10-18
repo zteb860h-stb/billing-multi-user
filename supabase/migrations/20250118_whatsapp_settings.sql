@@ -91,6 +91,11 @@ _____________________________
     'app_url',
     'http://selinggonet.netlify.app/',
     true
+),
+(
+    'fonnte_token',
+    '',
+    true
 )
 ON CONFLICT (setting_key) DO NOTHING;
 
