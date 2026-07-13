@@ -951,7 +951,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    function sendWhatsAppMessage(rowData) {
+    async function sendWhatsAppMessage(rowData) {
         if (!rowData || !rowData.profiles) {
             showErrorNotification('Data pelanggan tidak valid untuk mengirim WhatsApp');
             return;
@@ -961,15 +961,39 @@ document.addEventListener('DOMContentLoaded', () => {
         const whatsappNumber = rowData.profiles.whatsapp_number || '';
         const billAmount = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(rowData.amount);
         const billPeriod = rowData.invoice_period || '';
+        
         if (!whatsappNumber) {
             alert('Nomor WhatsApp pelanggan tidak tersedia!');
             return;
         }
-        const message = `Informasi Tagihan WiFi Anda\n\nHai Bapak/Ibu ${customerName},\nID Pelanggan: ${customerId}\n\nInformasi tagihan Bapak/Ibu bulan ini adalah:\nJumlah Tagihan: ${billAmount}\nPeriode Tagihan: ${billPeriod}\n\nBayar tagihan Anda di salah satu rekening di bawah ini:\n• Seabank 901307925714 An. TAUFIQ AZIZ\n• BCA 3621053653 An. TAUFIQ AZIZ\n• BSI 7211806138 An. TAUFIQ AZIZ\n• Dana 089609497390 An. TAUFIQ AZIZ\n\nTerima kasih atas kepercayaan Anda menggunakan layanan kami.\n_____________________________\n*Ini adalah pesan otomatis. Jika telah membayar tagihan, abaikan pesan ini.`;
+
+        let messageTemplate = `Informasi Tagihan WiFi Anda\n\nHai Bapak/Ibu {nama_pelanggan},\nID Pelanggan: {idpl}\n\nInformasi tagihan Bapak/Ibu bulan ini adalah:\nJumlah Tagihan: {total_tagihan}\nPeriode Tagihan: {periode}\n\nBayar tagihan Anda di salah satu rekening di bawah ini:\n• Seabank 901307925714 An. TAUFIQ AZIZ\n• BCA 3621053653 An. TAUFIQ AZIZ\n• BSI 7211806138 An. TAUFIQ AZIZ\n• Dana 089609497390 An. TAUFIQ AZIZ\n\nTerima kasih atas kepercayaan Anda menggunakan layanan kami.\n_____________________________\n*Ini adalah pesan otomatis. Jika telah membayar tagihan, abaikan pesan ini.`;
+        
+        try {
+            const { data, error } = await supabase
+                .from('whatsapp_settings')
+                .select('setting_value')
+                .eq('setting_key', 'template_custom_message')
+                .single();
+                
+            if (!error && data && data.setting_value) {
+                messageTemplate = data.setting_value;
+            }
+        } catch (e) {
+            console.error('Gagal mengambil template pesan WA manual:', e);
+        }
+
+        const message = messageTemplate
+            .replace(/{nama_pelanggan}/g, customerName)
+            .replace(/{idpl}/g, customerId)
+            .replace(/{total_tagihan}/g, billAmount)
+            .replace(/{periode}/g, billPeriod);
+
         let cleanedNumber = String(whatsappNumber).replace(/[^0-9+]/g, '');
         if (!cleanedNumber.startsWith('+') && !cleanedNumber.startsWith('62')) {
             cleanedNumber = cleanedNumber.startsWith('0') ? '62' + cleanedNumber.substring(1) : '62' + cleanedNumber;
         }
+        
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/${cleanedNumber}?text=${encodedMessage}`;
         window.open(whatsappUrl, '_blank');
