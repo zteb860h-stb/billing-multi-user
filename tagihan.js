@@ -1486,9 +1486,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 is_fully_paid: isFullyPaid
             };
             
+            let customerNotificationResult = null;
             // Send automatic WhatsApp notification to customer (hanya jika belum lunas)
             if (!isFullyPaid) {
-                const customerNotificationResult = await sendCustomerPaymentNotification(customerData, invoiceData, paymentMethod);
+                customerNotificationResult = await sendCustomerPaymentNotification(customerData, invoiceData, paymentMethod);
             }
 
             // Send notification to all admins using the existing system
@@ -1514,13 +1515,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 showErrorNotification('⚠️ Error mengirim notifikasi ke admin: ' + notifError.message);
             }
 
-            // Show results for customer notification only if not disabled
-            if (customerNotificationResult.message !== 'Notifikasi otomatis dinonaktifkan') {
-                if (customerNotificationResult.success) {
-                    const statusText = isFullyPaid ? 'LUNAS' : 'CICILAN';
-                    showSuccessNotification(`✅ Notifikasi WhatsApp ${statusText} berhasil dikirim ke ${customer.full_name}`);
-                } else {
-                    showErrorNotification(`⚠️ Gagal mengirim notifikasi ke pelanggan: ${customerNotificationResult.message}`);
+            // Show results for customer notification only if not disabled and if it was sent
+            if (!isFullyPaid && customerNotificationResult) {
+                if (customerNotificationResult.message !== 'Notifikasi otomatis dinonaktifkan') {
+                    if (customerNotificationResult.success) {
+                        const statusText = isFullyPaid ? 'LUNAS' : 'CICILAN';
+                        showSuccessNotification(`✅ Notifikasi WhatsApp ${statusText} berhasil dikirim ke ${customer.full_name}`);
+                    } else {
+                        showErrorNotification(`⚠️ Gagal mengirim notifikasi ke pelanggan: ${customerNotificationResult.message}`);
+                    }
                 }
             }
             
