@@ -14,6 +14,39 @@
             background-color: #f0f5ff;
         }
     </style>
+
+    <!-- Mobile-First Layout Helper -->
+    <style id="mobile-first-styles">
+        html {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%) !important;
+            background-attachment: fixed !important;
+        }
+        body {
+            max-width: 480px !important;
+            margin: 0 auto !important;
+            min-height: 100vh !important;
+            position: relative !important;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.3) !important;
+            background-color: #ffffff;
+        }
+        /* Override fixed positioning for mobile wrapper */
+        .fixed {
+            position: fixed !important;
+            max-width: 480px !important;
+            left: 50% !important;
+            right: auto !important;
+            transform: translateX(-50%) !important;
+            width: 100% !important;
+        }
+        /* Ensure overlay modals and loading elements still cover the whole mobile area */
+        .fixed.inset-0 {
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: 100% !important;
+            max-width: 480px !important;
+        }
+    </style>
+
 </head>
 <body class="bg-gray-50">
     <div class="relative flex h-screen w-full flex-col bg-[#f9f8fb] group/design-root overflow-x-hidden" style='font-family: Manrope, "Noto Sans", sans-serif;'>
