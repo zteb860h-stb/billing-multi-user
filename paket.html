@@ -113,9 +113,11 @@
 
             <div id="package-list"></div>
             
-            <button id="add-package-btn" class="fixed bottom-[84px] right-5 z-40 flex items-center justify-center w-14 h-14 rounded-full bg-[#683fe4] text-[#f9f8fb] shadow-lg hover:bg-[#5324e0] transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path></svg>
-            </button>
+            <div class="fixed bottom-[84px] z-40 pointer-events-none" style="left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px;">
+              <button id="add-package-btn" class="absolute right-5 flex items-center justify-center w-14 h-14 rounded-full bg-[#683fe4] text-[#f9f8fb] shadow-lg hover:bg-[#5324e0] transition-transform pointer-events-auto active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path></svg>
+              </button>
+            </div>
         </div>
 
         <!-- Form View -->
