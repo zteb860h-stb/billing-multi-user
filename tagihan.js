@@ -1486,8 +1486,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 is_fully_paid: isFullyPaid
             };
             
-            // Send automatic WhatsApp notification to customer
-            const customerNotificationResult = await sendCustomerPaymentNotification(customerData, invoiceData, paymentMethod);
+            // Send automatic WhatsApp notification to customer (hanya jika belum lunas)
+            if (!isFullyPaid) {
+                const customerNotificationResult = await sendCustomerPaymentNotification(customerData, invoiceData, paymentMethod);
+            }
 
             // Send notification to all admins using the existing system
             try {
