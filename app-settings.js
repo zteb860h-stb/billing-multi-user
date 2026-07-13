@@ -86,6 +86,12 @@ export default class AppSettings {
             const input = document.getElementById('fonnte-token-input');
             input.type = input.type === 'password' ? 'text' : 'password';
         });
+
+        // Toggle GenieACS Password visibility
+        document.getElementById('toggle-genieacs-password')?.addEventListener('click', () => {
+            const input = document.getElementById('genieacs-password-input');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        });
     }
 
     // View management methods removed - now using separate page
@@ -125,6 +131,9 @@ export default class AppSettings {
 
         // Load WhatsApp settings separately
         await this.loadWhatsAppSettings();
+        
+        // Load GenieACS settings separately
+        await this.loadGenieACSSettings();
     }
 
     async loadWhatsAppSettings() {
@@ -139,22 +148,59 @@ export default class AppSettings {
                 data.forEach(setting => {
                     if (setting.setting_key === 'auto_notification_enabled') {
                         const isEnabled = setting.setting_value === 'true';
-                        document.getElementById('auto-notification-toggle').checked = isEnabled;
+                        const toggle = document.getElementById('auto-notification-toggle');
+                        if (toggle) toggle.checked = isEnabled;
                     } else if (setting.setting_key === 'fonnte_token') {
-                        document.getElementById('fonnte-token-input').value = setting.setting_value || '';
+                        const input = document.getElementById('fonnte-token-input');
+                        if (input) input.value = setting.setting_value || '';
                     } else if (setting.setting_key === 'app_url') {
-                        document.getElementById('app-url-input').value = setting.setting_value || '';
+                        const input = document.getElementById('app-url-input');
+                        if (input) input.value = setting.setting_value || '';
                     } else if (setting.setting_key === 'template_payment_full') {
-                        document.getElementById('template-payment-full').value = setting.setting_value || '';
+                        const input = document.getElementById('template-payment-full');
+                        if (input) input.value = setting.setting_value || '';
                     } else if (setting.setting_key === 'template_payment_installment') {
-                        document.getElementById('template-payment-installment').value = setting.setting_value || '';
+                        const input = document.getElementById('template-payment-installment');
+                        if (input) input.value = setting.setting_value || '';
                     } else if (setting.setting_key === 'template_custom_message') {
-                        document.getElementById('template-custom-message').value = setting.setting_value || '';
+                        const input = document.getElementById('template-custom-message');
+                        if (input) input.value = setting.setting_value || '';
                     }
                 });
             }
         } catch (error) {
             console.error('Error loading WhatsApp settings:', error);
+        }
+    }
+
+    async loadGenieACSSettings() {
+        try {
+            const { data, error } = await supabase
+                .from('genieacs_settings')
+                .select('*');
+
+            if (error) throw error;
+
+            if (data && data.length > 0) {
+                data.forEach(setting => {
+                    if (setting.setting_key === 'genieacs_enabled') {
+                        const isEnabled = setting.setting_value === 'true';
+                        const toggle = document.getElementById('genieacs-enabled-toggle');
+                        if (toggle) toggle.checked = isEnabled;
+                    } else if (setting.setting_key === 'genieacs_url') {
+                        const input = document.getElementById('genieacs-url-input');
+                        if (input) input.value = setting.setting_value || '';
+                    } else if (setting.setting_key === 'genieacs_username') {
+                        const input = document.getElementById('genieacs-username-input');
+                        if (input) input.value = setting.setting_value || '';
+                    } else if (setting.setting_key === 'genieacs_password') {
+                        const input = document.getElementById('genieacs-password-input');
+                        if (input) input.value = setting.setting_value || '';
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error loading GenieACS settings:', error);
         }
     }
 
@@ -330,6 +376,9 @@ export default class AppSettings {
 
             // Save WhatsApp settings
             await this.saveWhatsAppSettings();
+
+            // Save GenieACS settings
+            await this.saveGenieACSSettings();
 
             alert('✅ Pengaturan berhasil disimpan!\n\nRefresh browser (F5) untuk melihat semua perubahan.');
             window.location.href = 'profile.html';
@@ -582,6 +631,49 @@ _____________________________
         } catch (error) {
             console.error('Error resetting templates:', error);
             alert('❌ Gagal reset template: ' + error.message);
+        }
+    }
+
+    async saveGenieACSSettings() {
+        try {
+            const genieacsSettings = [
+                {
+                    setting_key: 'genieacs_enabled',
+                    setting_value: document.getElementById('genieacs-enabled-toggle').checked ? 'true' : 'false'
+                },
+                {
+                    setting_key: 'genieacs_url',
+                    setting_value: document.getElementById('genieacs-url-input').value.trim()
+                },
+                {
+                    setting_key: 'genieacs_username',
+                    setting_value: document.getElementById('genieacs-username-input').value.trim()
+                },
+                {
+                    setting_key: 'genieacs_password',
+                    setting_value: document.getElementById('genieacs-password-input').value.trim()
+                }
+            ];
+
+            // Update each setting
+            for (const setting of genieacsSettings) {
+                const { error } = await supabase
+                    .from('genieacs_settings')
+                    .update({ 
+                        setting_value: setting.setting_value,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('setting_key', setting.setting_key);
+
+                if (error) {
+                    console.error(`Error updating ${setting.setting_key}:`, error);
+                }
+            }
+
+            console.log('✅ GenieACS settings saved successfully');
+        } catch (error) {
+            console.error('Error saving GenieACS settings:', error);
+            throw error;
         }
     }
 }

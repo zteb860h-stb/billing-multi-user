@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const customerName = document.getElementById('customerName');
     const customerEmail = document.getElementById('customerEmail');
     const editInfoCard = document.getElementById('edit-info-card');
+    const gantiWifiCard = document.getElementById('ganti-wifi-card');
 
     // Edit Mode Elements
     const editBackBtn = document.getElementById('edit-back-btn');
@@ -69,6 +70,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             populateViewMode(profile);
             populateEditMode(profile);
+            
+            // Check if GenieACS is enabled
+            await checkGenieACSEnabled();
 
         } catch (error) {
             console.error('Error loading profile:', error);
@@ -270,6 +274,39 @@ document.addEventListener('DOMContentLoaded', async function() {
             avatarUploadInput.click();
         });
         avatarUploadInput.addEventListener('change', handlePhotoUpload);
+    }
+
+    // Ganti WiFi event listener
+    if (gantiWifiCard) {
+        gantiWifiCard.addEventListener('click', () => {
+            window.location.href = 'ganti-wifi.html';
+        });
+    }
+
+    // Check if GenieACS is enabled and show/hide menu
+    async function checkGenieACSEnabled() {
+        try {
+            const { data, error } = await supabase
+                .from('genieacs_settings')
+                .select('setting_value')
+                .eq('setting_key', 'genieacs_enabled')
+                .single();
+
+            if (error) throw error;
+
+            const isEnabled = data?.setting_value === 'true';
+            
+            if (isEnabled && gantiWifiCard) {
+                gantiWifiCard.classList.remove('hidden');
+                console.log('GenieACS enabled - showing WiFi menu');
+            } else {
+                gantiWifiCard?.classList.add('hidden');
+                console.log('GenieACS disabled - hiding WiFi menu');
+            }
+        } catch (error) {
+            console.error('Error checking GenieACS status:', error);
+            gantiWifiCard?.classList.add('hidden');
+        }
     }
 
     // Initial load
