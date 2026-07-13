@@ -170,9 +170,11 @@
             <div id="customer-list"></div>
             
             <!-- FAB Menu Container -->
-            <div id="fab-menu-container" class="fixed bottom-[84px] right-5 z-40 flex flex-col items-end">
+            <div class="fixed bottom-[84px] z-40 pointer-events-none" style="left: 0; right: 0; margin: 0 auto; width: 100%; max-width: 480px;">
               <!-- Backdrop overlay -->
-              <div id="fab-backdrop" class="fixed inset-0 bg-black bg-opacity-30 hidden" style="z-index: -1;"></div>
+              <div id="fab-backdrop" class="fixed inset-0 bg-black bg-opacity-30 hidden pointer-events-auto" style="z-index: 39;"></div>
+              
+              <div id="fab-menu-container" class="absolute bottom-0 right-5 flex flex-col items-end pointer-events-auto" style="z-index: 40;">
               
               <!-- Expanded Menu Items (Hidden by default) -->
               <div id="fab-expanded-menu" class="flex flex-col gap-3 mb-3 items-end hidden">
@@ -216,6 +218,7 @@
                   <path d="M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z"></path>
                 </svg>
               </button>
+            </div>
             </div>
         </div>
 
