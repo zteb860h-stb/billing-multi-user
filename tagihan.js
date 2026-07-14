@@ -1129,11 +1129,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalDue = invoice.total_due || invoice.amount;
 
         // Confirmation dialog
-        const confirmMessage = `G��n+� BATALKAN PEMBAYARAN\n\n` +
+        const confirmMessage = `⚠️ BATALKAN PEMBAYARAN\n\n` +
             `Pelanggan: ${customerName}\n` +
             `Periode: ${invoice.invoice_period || 'N/A'}\n` +
             `Jumlah: ${formatter.format(totalDue)}\n` +
-            `Status: LUNAS G�� BELUM DIBAYAR\n\n` +
+            `Status: LUNAS ➔ BELUM DIBAYAR\n\n` +
             `Tindakan ini akan mengembalikan status tagihan ke "Belum Dibayar".\n` +
             `Data pembayaran (tanggal & metode) akan dihapus.\n\n` +
             `Apakah Anda yakin ingin membatalkan pembayaran ini?`;
@@ -1163,7 +1163,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(error.message);
             }
 
-            showSuccessNotification(`G�� Pembayaran berhasil dibatalkan!\nTagihan "${invoice.invoice_period}" kembali ke status belum dibayar.`);
+            showSuccessNotification(`✅ Pembayaran berhasil dibatalkan!\nTagihan "${invoice.invoice_period}" kembali ke status belum dibayar.`);
 
             // Refresh data and switch to unpaid tab
             await fetchData();
@@ -1172,7 +1172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             hidePaymentLoading();
             console.error('Error reverting payment:', error);
-            showErrorNotification(`G�� Gagal membatalkan pembayaran: ${error.message}`);
+            showErrorNotification(`❌ Gagal membatalkan pembayaran: ${error.message}`);
         }
     }
 
@@ -1301,11 +1301,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showSuccessNotification(message) {
-        showNotification(message, '#28a745', 'G��');
+        showNotification(message, '#28a745', '✅');
     }
 
     function showErrorNotification(message) {
-        showNotification(message, '#dc3545', 'G��');
+        showNotification(message, '#dc3545', '❌');
     }
 
     function showInstallmentModal(invoiceData) {
@@ -1721,14 +1721,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (notifError) {
                     console.error('Error sending admin payment notification:', notifError);
-                    showErrorNotification('G��n+� Gagal mengirim notifikasi ke admin: ' + notifError.message);
+                    showErrorNotification('❌ Gagal mengirim notifikasi ke admin: ' + notifError.message);
                 } else {
-                    console.log('G�� Payment notification sent to all admins');
-                    showSuccessNotification(`G�� Notifikasi pembayaran berhasil dikirim ke admin`);
+                    console.log('✅ Payment notification sent to all admins');
+                    showSuccessNotification(`✅ Notifikasi pembayaran berhasil dikirim ke admin`);
                 }
             } catch (notifError) {
                 console.error('Failed to send admin notification:', notifError);
-                showErrorNotification('G��n+� Error mengirim notifikasi ke admin: ' + notifError.message);
+                showErrorNotification('❌ Error mengirim notifikasi ke admin: ' + notifError.message);
             }
 
             // Show results for customer notification only if not disabled and if it was sent
@@ -1736,16 +1736,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (customerNotificationResult.message !== 'Notifikasi otomatis dinonaktifkan') {
                     if (customerNotificationResult.success) {
                         const statusText = isFullyPaid ? 'LUNAS' : 'CICILAN';
-                        showSuccessNotification(`G�� Notifikasi WhatsApp ${statusText} berhasil dikirim ke ${customer.full_name}`);
+                        showSuccessNotification(`✅ Notifikasi WhatsApp ${statusText} berhasil dikirim ke ${customer.full_name}`);
                     } else {
-                        showErrorNotification(`G��n+� Gagal mengirim notifikasi ke pelanggan: ${customerNotificationResult.message}`);
+                        showErrorNotification(`❌ Gagal mengirim notifikasi ke pelanggan: ${customerNotificationResult.message}`);
                     }
                 }
             }
 
         } catch (error) {
             console.error('Error sending WhatsApp notifications:', error);
-            showErrorNotification(`G��n+� Error mengirim notifikasi: ${error.message}`);
+            showErrorNotification(`❌ Error mengirim notifikasi: ${error.message}`);
         }
     }
 
