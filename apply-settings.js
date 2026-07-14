@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if (loginLogo && loginAppName) {
         loginLogo.src = settings?.logo_url || 'assets/sn-blue.png';
-        loginAppName.textContent = settings?.app_name || 'Selinggonet';
+        loginAppName.textContent = settings?.app_name || 'GARDU NETWORK';
     }
     
     // Check if we're on register page
@@ -299,6 +299,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if (registerLogo && registerAppName) {
         registerLogo.src = settings?.logo_url || 'assets/sn-blue.png';
-        registerAppName.textContent = settings?.app_name || 'Selinggonet';
+        registerAppName.textContent = settings?.app_name || 'GARDU NETWORK';
     }
 });

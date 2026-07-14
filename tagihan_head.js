@@ -1,4 +1,4 @@
-import { supabase } from './supabase-client.js';
+﻿import { supabase } from './supabase-client.js';
 import { getCurrentAdminName, showNotificationResult, sendCustomerPaymentNotification } from './whatsapp-notification.js'; // Pastikan `sendCustomerPaymentNotification` ada di sini
 
 
@@ -389,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Ambil data Unpaid dengan filter (hanya unpaid, tidak termasuk partially_paid)
                 const { data: unpaid, error: unpaidErr } = await supabase
                     .from('invoices')
-                    .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, broadcast_count, profiles (full_name, idpl, whatsapp_number)`)
+                    .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, profiles (full_name, idpl, whatsapp_number)`)
                     .eq('status', 'unpaid')
                     .eq('invoice_period', targetPeriode)
                     .order('created_at', { ascending: false });
@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     const { data: installment, error: installmentErr } = await supabase
                         .from('invoices')
-                        .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, broadcast_count, profiles (full_name, idpl, whatsapp_number)`)
+                        .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, profiles (full_name, idpl, whatsapp_number)`)
                         .eq('status', 'partially_paid')
                         .eq('invoice_period', targetPeriode)
                         .order('created_at', { ascending: false });
@@ -411,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Fallback: ambil data berdasarkan kondisi amount_paid > 0 dan status != 'paid'
                     const { data: installmentFallback, error: fallbackErr } = await supabase
                         .from('invoices')
-                        .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, broadcast_count, profiles (full_name, idpl, whatsapp_number)`)
+                        .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, profiles (full_name, idpl, whatsapp_number)`)
                         .neq('status', 'paid')
                         .gt('amount_paid', 0)
                         .eq('invoice_period', targetPeriode)
@@ -427,7 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 while (true) {
                     const { data: paidChunk, error: paidErrChunk } = await supabase
                         .from('invoices')
-                        .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, broadcast_count, profiles (full_name, idpl, whatsapp_number)`)
+                        .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, profiles (full_name, idpl, whatsapp_number)`)
                         .eq('status', 'paid')
                         .eq('invoice_period', targetPeriode)
                         .order('paid_at', { ascending: false })
@@ -449,7 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Ambil data Unpaid tanpa filter (hanya unpaid, tidak termasuk partially_paid)
                 const { data: unpaid, error: unpaidErr } = await supabase
                     .from('invoices')
-                    .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, broadcast_count, profiles (full_name, idpl, whatsapp_number)`)
+                    .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, profiles (full_name, idpl, whatsapp_number)`)
                     .eq('status', 'unpaid')
                     .order('created_at', { ascending: false });
                 if (unpaidErr) throw unpaidErr;
@@ -459,7 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     const { data: installment, error: installmentErr } = await supabase
                         .from('invoices')
-                        .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, broadcast_count, profiles (full_name, idpl, whatsapp_number)`)
+                        .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, profiles (full_name, idpl, whatsapp_number)`)
                         .eq('status', 'partially_paid')
                         .order('created_at', { ascending: false });
                     if (installmentErr) throw installmentErr;
@@ -469,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Fallback: ambil data berdasarkan kondisi amount_paid > 0 dan status != 'paid'
                     const { data: installmentFallback, error: fallbackErr } = await supabase
                         .from('invoices')
-                        .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, broadcast_count, profiles (full_name, idpl, whatsapp_number)`)
+                        .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, profiles (full_name, idpl, whatsapp_number)`)
                         .neq('status', 'paid')
                         .gt('amount_paid', 0)
                         .order('created_at', { ascending: false });
@@ -484,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 while (true) {
                     const { data: paidChunk, error: paidErrChunk } = await supabase
                         .from('invoices')
-                        .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, broadcast_count, profiles (full_name, idpl, whatsapp_number)`)
+                        .select(`id, invoice_period, amount, total_due, amount_paid, status, paid_at, payment_method, profiles (full_name, idpl, whatsapp_number)`)
                         .eq('status', 'paid')
                         .order('paid_at', { ascending: false })
                         .range(page * CHUNK_SIZE, (page + 1) * CHUNK_SIZE - 1);
@@ -560,218 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         renderList();
-        invoiceList.addEventListener('change', (event) => {
-            if (event.target.classList.contains('broadcast-checkbox')) {
-                updateBroadcastActions();
-            }
-        });
-
-        updateBroadcastActions(); // reset selection state when redrawing
     }
-
-    function updateBroadcastActions() {
-        const checkAll = document.getElementById('check-all-broadcast');
-        const checkboxes = document.querySelectorAll('.broadcast-checkbox');
-        const checkedBoxes = document.querySelectorAll('.broadcast-checkbox:checked');
-        const broadcastContainer = document.getElementById('broadcast-actions-container');
-        const btnBroadcast = document.getElementById('btn-show-broadcast-modal');
-        const selectedCount = document.getElementById('broadcast-selected-count');
-
-        if (currentTab === 'unpaid') {
-            broadcastContainer.classList.remove('hidden');
-            if (checkboxes.length > 0) {
-                checkAll.checked = checkboxes.length === checkedBoxes.length;
-            } else {
-                checkAll.checked = false;
-            }
-
-            if (checkedBoxes.length > 0) {
-                btnBroadcast.classList.remove('hidden');
-                selectedCount.textContent = checkedBoxes.length;
-            } else {
-                btnBroadcast.classList.add('hidden');
-            }
-        } else {
-            broadcastContainer.classList.add('hidden');
-        }
-    }
-
-    document.getElementById('check-all-broadcast')?.addEventListener('change', (e) => {
-        const checkboxes = document.querySelectorAll('.broadcast-checkbox');
-        checkboxes.forEach(cb => cb.checked = e.target.checked);
-        updateBroadcastActions();
-    });
-
-    async function initBroadcastModal() {
-        const btnShowModal = document.getElementById('btn-show-broadcast-modal');
-        const modal = document.getElementById('broadcast-modal');
-        const btnClose = document.getElementById('close-broadcast-modal');
-        const btnCancel = document.getElementById('cancel-broadcast-btn');
-        const btnConfirm = document.getElementById('confirm-broadcast-btn');
-        const textareaTemplate = document.getElementById('broadcast-message-template');
-        const btnReleaseLimit = document.getElementById('btn-release-limit');
-        const limitInput = document.getElementById('broadcast-batch-limit');
-        const infoCount = document.getElementById('broadcast-info-count');
-
-        if (!btnShowModal || !modal) return;
-
-        // Toggle modal
-        btnShowModal.addEventListener('click', async () => {
-            const checkedBoxes = document.querySelectorAll('.broadcast-checkbox:checked');
-            if (checkedBoxes.length === 0) return;
-            
-            infoCount.textContent = checkedBoxes.length;
-            
-            // Ambil template
-            try {
-                const { data, error } = await supabase
-                    .from('whatsapp_settings')
-                    .select('setting_value')
-                    .eq('setting_key', 'template_custom_message')
-                    .single();
-
-                if (!error && data && data.setting_value) {
-                    textareaTemplate.value = data.setting_value;
-                } else {
-                    textareaTemplate.value = `Informasi Tagihan WiFi Anda\n\nHai Bapak/Ibu {nama_pelanggan},\nID Pelanggan: {idpl}\n\nInformasi tagihan Bapak/Ibu bulan ini adalah:\nJumlah Tagihan: {total_tagihan}\nPeriode Tagihan: {periode}\n\nBayar tagihan Anda di salah satu rekening di bawah ini:\n- Seabank 901307925714 An. TAUFIQ AZIZ\n- BCA 3621053653 An. TAUFIQ AZIZ\n- BSI 7211806138 An. TAUFIQ AZIZ\n- Dana 089609497390 An. TAUFIQ AZIZ\n\nTerima kasih atas kepercayaan Anda menggunakan layanan kami.\n_____________________________\n*Ini adalah pesan otomatis. Jika telah membayar tagihan, abaikan pesan ini.`;
-                }
-            } catch(e) {
-                console.error(e);
-            }
-
-            modal.classList.remove('hidden');
-        });
-
-        const hideModal = () => modal.classList.add('hidden');
-        btnClose.addEventListener('click', hideModal);
-        btnCancel.addEventListener('click', hideModal);
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) hideModal();
-        });
-
-        btnReleaseLimit.addEventListener('click', () => {
-            const checkedBoxes = document.querySelectorAll('.broadcast-checkbox:checked');
-            limitInput.value = checkedBoxes.length;
-        });
-
-        // Proses Broadcast
-        btnConfirm.addEventListener('click', async () => {
-            const template = textareaTemplate.value;
-            const limit = parseInt(limitInput.value) || 20;
-            const checkedBoxes = Array.from(document.querySelectorAll('.broadcast-checkbox:checked'));
-            const totalToProcess = checkedBoxes.length;
-
-            if (totalToProcess === 0) return;
-            if (!template) {
-                showErrorNotification('Pesan tidak boleh kosong!');
-                return;
-            }
-
-            // Simpan template
-            try {
-                await supabase
-                    .from('whatsapp_settings')
-                    .upsert({ setting_key: 'template_custom_message', setting_value: template }, { onConflict: 'setting_key' });
-            } catch(e) {
-                console.error('Failed to save template', e);
-            }
-
-            // Ambil invoice IDs yang akan diproses batch ini
-            const batchIds = checkedBoxes.slice(0, limit).map(cb => cb.value);
-            hideModal();
-
-            if (!confirm(`Kirim pesan WhatsApp ke ${batchIds.length} pelanggan (Batch ini)?\n\nTersisa ${totalToProcess - batchIds.length} pelanggan untuk batch selanjutnya jika dilewati limit.`)) {
-                return;
-            }
-
-            showPaymentLoading(`Memproses Broadcast ke ${batchIds.length} pelanggan...`);
-            let sent = 0;
-            let skipped = 0;
-            let errors = [];
-
-            for (let i = 0; i < batchIds.length; i++) {
-                const id = batchIds[i];
-                const invoice = unpaidData.find(item => item.id === id);
-                
-                if (!invoice || !invoice.profiles || !invoice.profiles.whatsapp_number) {
-                    skipped++;
-                    continue;
-                }
-
-                const formatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
-                let target = String(invoice.profiles.whatsapp_number).replace(/[^0-9]/g, '');
-                if (target.startsWith('0')) target = '62' + target.substring(1);
-
-                const message = template
-                    .replace(/{nama_pelanggan}/g, invoice.profiles.full_name)
-                    .replace(/{idpl}/g, invoice.profiles.idpl)
-                    .replace(/{periode}/g, invoice.invoice_period)
-                    .replace(/{total_tagihan}/g, formatter.format(invoice.amount))
-                    .replace(/{jumlah_dibayar}/g, formatter.format(invoice.amount_paid || 0))
-                    .replace(/{sisa_tagihan}/g, formatter.format(Math.max(0, invoice.amount - (invoice.amount_paid || 0))))
-                    .replace(/{metode_pembayaran}/g, invoice.payment_method || '-')
-                    .replace(/{app_url}/g, 'http://gardunetwork.netlify.app/')
-                    .replace(/{email_pelanggan}/g, '-')
-                    .replace(/{pesan_custom}/g, '');
-
-                try {
-                    // Pakai invokeWhatsappFunction jika ada atau fallback panggil supabase invoke
-                    const { data, error } = await supabase.functions.invoke('send-whatsapp-notification', {
-                        body: { target, message },
-                    });
-
-                    if (error || (data && data.success === false)) {
-                        errors.push(`${invoice.profiles.full_name}: ${error?.message || data?.message}`);
-                        skipped++;
-                    } else {
-                        sent++;
-                        // update broadcast count in database
-                        let newCount = (invoice.broadcast_count || 0) + 1;
-                        await supabase.from('invoices').update({ broadcast_count: newCount }).eq('id', id);
-                        
-                        // update local state
-                        invoice.broadcast_count = newCount;
-                        
-                        // update UI
-                        const cell = document.getElementById(`broadcast-cell-${id}`);
-                        if (cell) {
-                            if (newCount >= 1) {
-                                const icon1 = cell.querySelector('.broadcast-icon-1');
-                                if (icon1) { icon1.classList.remove('text-gray-400'); icon1.classList.add('text-green-500'); icon1.title = 'Broadcast ke-1: Sudah dikirim'; }
-                            }
-                            if (newCount >= 2) {
-                                const icon2 = cell.querySelector('.broadcast-icon-2');
-                                if (icon2) { icon2.classList.remove('text-gray-400'); icon2.classList.add('text-green-500'); icon2.title = 'Broadcast ke-2: Sudah dikirim'; }
-                            }
-                        }
-
-                        // Uncheck the checkbox
-                        const cb = document.querySelector(`.broadcast-checkbox[value="${id}"]`);
-                        if (cb) cb.checked = false;
-                    }
-                } catch (err) {
-                    errors.push(`${invoice.profiles.full_name}: Error internal`);
-                    skipped++;
-                }
-
-                // Jeda 2 detik per pengiriman
-                if (i < batchIds.length - 1) {
-                    await new Promise(r => setTimeout(r, 2000));
-                }
-            }
-
-            hidePaymentLoading();
-            updateBroadcastActions();
-
-            let resultMsg = `Terkirim: ${sent}, Dilewati: ${skipped}`;
-            if (errors.length > 0) {
-                resultMsg += `\nBeberapa Error:\n${errors.slice(0, 3).join('\n')}`;
-            }
-            alert(`Broadcast Selesai!\n\n${resultMsg}`);
-        });
-    }
-
-    initBroadcastModal();
 
     function renderList() {
         invoiceList.innerHTML = '';
@@ -846,38 +635,17 @@ document.addEventListener('DOMContentLoaded', () => {
             invoiceDiv.className = 'flex items-center gap-4 bg-[#f9f8fb] px-4 min-h-[72px] py-2 justify-between border-b border-gray-200';
 
             if (currentTab === 'unpaid') {
-                const broadcastCount = item.broadcast_count || 0;
-                const icon1Class = broadcastCount >= 1 ? 'text-green-500' : 'text-gray-400';
-                const icon1Title = broadcastCount >= 1 ? 'Broadcast ke-1: Sudah dikirim' : 'Broadcast ke-1: Belum dikirim';
-                const icon2Class = broadcastCount >= 2 ? 'text-green-500' : 'text-gray-400';
-                const icon2Title = broadcastCount >= 2 ? 'Broadcast ke-2: Sudah dikirim' : 'Broadcast ke-2: Belum dikirim';
-                
-                const hasValidWhatsapp = item.profiles?.whatsapp_number && String(item.profiles.whatsapp_number).replace(/[^0-9]/g, '').length >= 10;
-                const checkboxHtml = hasValidWhatsapp ? 
-                    `<input type="checkbox" class="broadcast-checkbox w-4 h-4 rounded border-gray-300 text-green-500 focus:ring-green-500" value="${invoiceId}">` : 
-                    `<div class="w-4 h-4" title="Tidak ada nomor WA"></div>`;
-                
-                const waButtonHtml = hasValidWhatsapp ?
-                    `<button class="whatsapp-btn flex items-center justify-center w-7 h-7 bg-green-500 hover:bg-green-600 rounded-lg transition-colors" title="Kirim WhatsApp" data-invoice-id="${invoiceId}">
-                        <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488" /></svg>
-                    </button>` : '';
-
                 invoiceDiv.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        ${checkboxHtml}
-                        <div class="flex flex-col justify-center gap-1">
-                            <p class="text-[#110e1b] text-base font-medium leading-normal">${customerName}</p>
-                            <span class="${pillClasses.bg} ${pillClasses.text} text-xs font-medium w-fit px-2.5 py-0.5 rounded-full">
-                                ${period}
-                            </span>
-                        </div>
+                    <div class="flex flex-col justify-center gap-1">
+                        <p class="text-[#110e1b] text-base font-medium leading-normal">${customerName}</p>
+                        <span class="${pillClasses.bg} ${pillClasses.text} text-xs font-medium w-fit px-2.5 py-0.5 rounded-full">
+                            ${period}
+                        </span>
                     </div>
-                    <div class="shrink-0 flex gap-1.5 items-center">
-                        <div class="flex gap-1 mr-1 broadcast-indicators" id="broadcast-cell-${invoiceId}">
-                            <svg class="w-4 h-4 ${icon1Class} broadcast-icon-1" title="${icon1Title}" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488" /></svg>
-                            <svg class="w-4 h-4 ${icon2Class} broadcast-icon-2" title="${icon2Title}" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488" /></svg>
-                        </div>
-                        ${waButtonHtml}
+                    <div class="shrink-0 flex gap-1.5">
+                        <button class="whatsapp-btn flex items-center justify-center w-7 h-7 bg-green-500 hover:bg-green-600 rounded-lg transition-colors" title="Kirim WhatsApp" data-invoice-id="${invoiceId}">
+                            <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488" /></svg>
+                        </button>
                         <button class="installment-btn flex items-center justify-center h-7 px-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs transition-colors" title="Bayar Cicilan" data-invoice-id="${invoiceId}" data-remaining-amount="${item.amount}" data-customer-name="${customerName}">
                             Cicil
                         </button>
@@ -1136,11 +904,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalDue = invoice.total_due || invoice.amount;
 
         // Confirmation dialog
-        const confirmMessage = `⚠️ BATALKAN PEMBAYARAN\n\n` +
+        const confirmMessage = `ΓÜá∩╕Å BATALKAN PEMBAYARAN\n\n` +
             `Pelanggan: ${customerName}\n` +
             `Periode: ${invoice.invoice_period || 'N/A'}\n` +
             `Jumlah: ${formatter.format(totalDue)}\n` +
-            `Status: LUNAS ➔ BELUM DIBAYAR\n\n` +
+            `Status: LUNAS ΓåÆ BELUM DIBAYAR\n\n` +
             `Tindakan ini akan mengembalikan status tagihan ke "Belum Dibayar".\n` +
             `Data pembayaran (tanggal & metode) akan dihapus.\n\n` +
             `Apakah Anda yakin ingin membatalkan pembayaran ini?`;
@@ -1170,7 +938,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(error.message);
             }
 
-            showSuccessNotification(`✅ Pembayaran berhasil dibatalkan!\nTagihan "${invoice.invoice_period}" kembali ke status belum dibayar.`);
+            showSuccessNotification(`Γ£à Pembayaran berhasil dibatalkan!\nTagihan "${invoice.invoice_period}" kembali ke status belum dibayar.`);
 
             // Refresh data and switch to unpaid tab
             await fetchData();
@@ -1179,16 +947,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             hidePaymentLoading();
             console.error('Error reverting payment:', error);
-            showErrorNotification(`❌ Gagal membatalkan pembayaran: ${error.message}`);
+            showErrorNotification(`Γ¥î Gagal membatalkan pembayaran: ${error.message}`);
         }
     }
 
     async function sendWhatsAppMessage(rowData) {
-        let customTemplate = `Informasi Tagihan WiFi Anda\n\nHai Bapak/Ibu {nama_pelanggan},\nID Pelanggan: {idpl}\n\nInformasi tagihan Bapak/Ibu bulan ini adalah:\nJumlah Tagihan: {total_tagihan}\nPeriode Tagihan: {periode}\n\nBayar tagihan Anda di salah satu rekening di bawah ini:\n- Seabank 901307925714 An. TAUFIQ AZIZ\n- BCA 3621053653 An. TAUFIQ AZIZ\n- BSI 7211806138 An. TAUFIQ AZIZ\n- Dana 089609497390 An. TAUFIQ AZIZ\n\nTerima kasih atas kepercayaan Anda menggunakan layanan kami.\n_____________________________\n*Ini adalah pesan otomatis. Jika telah membayar tagihan, abaikan pesan ini.`;
-        try {
-            const { data } = await supabase.from('whatsapp_settings').select('setting_value').eq('setting_key', 'template_custom_message').single();
-            if (data && data.setting_value) customTemplate = data.setting_value;
-        } catch(e) {}
         if (!rowData || !rowData.profiles) {
             showErrorNotification('Data pelanggan tidak valid untuk mengirim WhatsApp');
             return;
@@ -1204,19 +967,27 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        let messageTemplate = customTemplate;
+        let messageTemplate = `Informasi Tagihan WiFi Anda\n\nHai Bapak/Ibu {nama_pelanggan},\nID Pelanggan: {idpl}\n\nInformasi tagihan Bapak/Ibu bulan ini adalah:\nJumlah Tagihan: {total_tagihan}\nPeriode Tagihan: {periode}\n\nBayar tagihan Anda di salah satu rekening di bawah ini:\nΓÇó Seabank 901307925714 An. TAUFIQ AZIZ\nΓÇó BCA 3621053653 An. TAUFIQ AZIZ\nΓÇó BSI 7211806138 An. TAUFIQ AZIZ\nΓÇó Dana 089609497390 An. TAUFIQ AZIZ\n\nTerima kasih atas kepercayaan Anda menggunakan layanan kami.\n_____________________________\n*Ini adalah pesan otomatis. Jika telah membayar tagihan, abaikan pesan ini.`;
+
+        try {
+            const { data, error } = await supabase
+                .from('whatsapp_settings')
+                .select('setting_value')
+                .eq('setting_key', 'template_custom_message')
+                .single();
+
+            if (!error && data && data.setting_value) {
+                messageTemplate = data.setting_value;
+            }
+        } catch (e) {
+            console.error('Gagal mengambil template pesan WA manual:', e);
+        }
 
         const message = messageTemplate
             .replace(/{nama_pelanggan}/g, customerName)
             .replace(/{idpl}/g, customerId)
             .replace(/{total_tagihan}/g, billAmount)
-            .replace(/{periode}/g, billPeriod)
-            .replace(/{jumlah_dibayar}/g, new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(rowData.amount_paid || 0))
-            .replace(/{sisa_tagihan}/g, new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Math.max(0, rowData.amount - (rowData.amount_paid || 0))))
-            .replace(/{metode_pembayaran}/g, rowData.payment_method || '-')
-            .replace(/{app_url}/g, 'http://gardunetwork.netlify.app/')
-            .replace(/{email_pelanggan}/g, '-')
-            .replace(/{pesan_custom}/g, '');
+            .replace(/{periode}/g, billPeriod);
 
         let cleanedNumber = String(whatsappNumber).replace(/[^0-9+]/g, '');
         if (!cleanedNumber.startsWith('+') && !cleanedNumber.startsWith('62')) {
@@ -1314,11 +1085,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showSuccessNotification(message) {
-        showNotification(message, '#28a745', '✅');
+        showNotification(message, '#28a745', 'Γ£ô');
     }
 
     function showErrorNotification(message) {
-        showNotification(message, '#dc3545', '❌');
+        showNotification(message, '#dc3545', 'ΓÜá');
     }
 
     function showInstallmentModal(invoiceData) {
@@ -1734,14 +1505,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (notifError) {
                     console.error('Error sending admin payment notification:', notifError);
-                    showErrorNotification('❌ Gagal mengirim notifikasi ke admin: ' + notifError.message);
+                    showErrorNotification('ΓÜá∩╕Å Gagal mengirim notifikasi ke admin: ' + notifError.message);
                 } else {
-                    console.log('✅ Payment notification sent to all admins');
-                    showSuccessNotification(`✅ Notifikasi pembayaran berhasil dikirim ke admin`);
+                    console.log('Γ£à Payment notification sent to all admins');
+                    showSuccessNotification(`Γ£à Notifikasi pembayaran berhasil dikirim ke admin`);
                 }
             } catch (notifError) {
                 console.error('Failed to send admin notification:', notifError);
-                showErrorNotification('❌ Error mengirim notifikasi ke admin: ' + notifError.message);
+                showErrorNotification('ΓÜá∩╕Å Error mengirim notifikasi ke admin: ' + notifError.message);
             }
 
             // Show results for customer notification only if not disabled and if it was sent
@@ -1749,16 +1520,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (customerNotificationResult.message !== 'Notifikasi otomatis dinonaktifkan') {
                     if (customerNotificationResult.success) {
                         const statusText = isFullyPaid ? 'LUNAS' : 'CICILAN';
-                        showSuccessNotification(`✅ Notifikasi WhatsApp ${statusText} berhasil dikirim ke ${customer.full_name}`);
+                        showSuccessNotification(`Γ£à Notifikasi WhatsApp ${statusText} berhasil dikirim ke ${customer.full_name}`);
                     } else {
-                        showErrorNotification(`❌ Gagal mengirim notifikasi ke pelanggan: ${customerNotificationResult.message}`);
+                        showErrorNotification(`ΓÜá∩╕Å Gagal mengirim notifikasi ke pelanggan: ${customerNotificationResult.message}`);
                     }
                 }
             }
 
         } catch (error) {
             console.error('Error sending WhatsApp notifications:', error);
-            showErrorNotification(`❌ Error mengirim notifikasi: ${error.message}`);
+            showErrorNotification(`ΓÜá∩╕Å Error mengirim notifikasi: ${error.message}`);
         }
     }
 

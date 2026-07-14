@@ -650,7 +650,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const customerName = currentProfile ? currentProfile.full_name : currentUser.email;
         const customerIdpl = currentProfile ? currentProfile.idpl : 'N/A';
 
-        const message = `Halo Admin Selinggonet, saya ingin mengkonfirmasi pembayaran tagihan:
+        const message = `Halo Admin GARDU NETWORK, saya ingin mengkonfirmasi pembayaran tagihan:
 
 - *Nama:* ${customerName}
 - *ID Pelanggan:* ${customerIdpl}

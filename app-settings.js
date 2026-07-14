@@ -200,8 +200,8 @@ export default class AppSettings {
 
     getDefaultSettings() {
         return {
-            app_name: 'Selinggonet',
-            app_short_name: 'Selinggonet',
+            app_name: 'GARDU NETWORK',
+            app_short_name: 'GARDU NETWORK',
             app_description: 'Sistem manajemen pelanggan ISP',
             app_tagline: 'Kelola pelanggan dengan mudah',
             logo_url: 'assets/sn-blue.png',
@@ -209,7 +209,7 @@ export default class AppSettings {
             icon_192_url: 'assets/logo_192x192.png',
             icon_512_url: 'assets/logo_512x512.png',
             whatsapp_number: '6281914170701',
-            support_email: 'support@selinggonet.com',
+            support_email: 'support@gardunetwork.com',
             office_address: '',
             offline_payment_name: 'Bapak Karsadi dan Ibu Sopiyah',
             offline_payment_address: 'Dukuh Sekiyong RT 04/RW 07, Desa Pamutih',
@@ -451,7 +451,7 @@ export default class AppSettings {
 
     applySettings(settings) {
         // Update title
-        document.title = settings.app_name || 'Selinggonet';
+        document.title = settings.app_name || 'GARDU NETWORK';
 
         // Update favicon
         this.updateFavicon(settings.favicon_url);
@@ -557,7 +557,7 @@ ID Pelanggan: {idpl}
 {pesan_custom}
 
 _____________________________
-*Pesan otomatis dari Selinggonet*`
+*Pesan otomatis dari GARDU NETWORK*`
             };
 
             // Update templates in form

@@ -38,7 +38,7 @@ Login di:
 *- Password:* password
 
 _____________________________
-*Pesan otomatis dari Selinggonet*',
+*Pesan otomatis dari GARDU NETWORK*',
     true
 ),
 (
@@ -66,7 +66,7 @@ Login di:
 *- Password:* password
 
 _____________________________
-*Pesan otomatis dari Selinggonet*',
+*Pesan otomatis dari GARDU NETWORK*',
     true
 ),
 (
@@ -79,7 +79,7 @@ ID Pelanggan: {idpl}
 {pesan_custom}
 
 _____________________________
-*Pesan dari Selinggonet*',
+*Pesan dari GARDU NETWORK*',
     true
 ),
 (
@@ -89,7 +89,7 @@ _____________________________
 ),
 (
     'app_url',
-    'http://selinggonet.netlify.app/',
+    'http://gardunetwork.netlify.app/',
     true
 ),
 (

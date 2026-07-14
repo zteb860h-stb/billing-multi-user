@@ -3,8 +3,8 @@
 
 CREATE TABLE public.app_settings (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
-  app_name text NOT NULL DEFAULT 'Selinggonet'::text,
-  app_short_name text NOT NULL DEFAULT 'Selinggonet'::text,
+  app_name text NOT NULL DEFAULT 'GARDU NETWORK'::text,
+  app_short_name text NOT NULL DEFAULT 'GARDU NETWORK'::text,
   app_description text DEFAULT 'Sistem manajemen pelanggan ISP'::text,
   app_tagline text DEFAULT 'Kelola pelanggan dengan mudah'::text,
   logo_url text NOT NULL DEFAULT 'assets/logo_192x192.png'::text,
@@ -12,7 +12,7 @@ CREATE TABLE public.app_settings (
   icon_192_url text DEFAULT 'assets/logo_192x192.png'::text,
   icon_512_url text DEFAULT 'assets/logo_512x512.png'::text,
   whatsapp_number text DEFAULT '6281914170701'::text,
-  support_email text DEFAULT 'support@selinggonet.com'::text,
+  support_email text DEFAULT 'support@gardunetwork.com'::text,
   office_address text DEFAULT ''::text,
   offline_payment_name text DEFAULT 'Bapak Karsadi dan Ibu Sopiyah'::text,
   offline_payment_address text DEFAULT 'Dukuh Sekiyong RT 04/RW 07, Desa Pamutih'::text,

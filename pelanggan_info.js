@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         return `🏦 *KONFIRMASI PEMBAYARAN TRANSFER*
 
-Halo Admin Selinggonet,
+Halo Admin GARDU NETWORK,
 
 Saya ingin mengkonfirmasi pembayaran tagihan internet:
 
@@ -169,13 +169,13 @@ Bukti transfer akan saya kirim setelah pesan ini.
 
 Terima kasih! 🙏
 
-_Pesan otomatis dari aplikasi Selinggonet_`;
+_Pesan otomatis dari aplikasi GARDU NETWORK_`;
     }
 
     function createLocationRequestMessage(customerName, idpl) {
         return `📍 *PERMINTAAN ALAMAT LENGKAP*
 
-Halo Admin Selinggonet,
+Halo Admin GARDU NETWORK,
 
 Saya ingin mendapatkan alamat lengkap untuk pembayaran langsung:
 
@@ -190,7 +190,7 @@ Mohon dikirimkan:
 
 Terima kasih! 🙏
 
-_Pesan otomatis dari aplikasi Selinggonet_`;
+_Pesan otomatis dari aplikasi GARDU NETWORK_`;
     }
 
     function sendWhatsAppMessage(message) {
