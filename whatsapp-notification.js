@@ -86,10 +86,8 @@ export async function sendCustomerPaymentNotification(customerData, invoiceData,
     
     const paymentMethodText = { 'cash': 'Tunai', 'transfer': 'Transfer Bank', 'ewallet': 'E-Wallet', 'qris': 'QRIS' }[paymentMethod] || 'Tunai';
 
-    // Get template based on payment type
-    let template = invoiceData.is_fully_paid 
-        ? settings.template_payment_full 
-        : settings.template_payment_installment;
+    // Get template
+    let template = settings.template_custom_message || '';
 
     // Replace variables in template
     const message = template
@@ -101,7 +99,8 @@ export async function sendCustomerPaymentNotification(customerData, invoiceData,
         .replace(/{sisa_tagihan}/g, formatter.format(invoiceData.remaining_amount || 0))
         .replace(/{metode_pembayaran}/g, paymentMethodText)
         .replace(/{app_url}/g, settings.app_url || 'http://selinggonet.netlify.app/')
-        .replace(/{email_pelanggan}/g, customerEmail);
+        .replace(/{email_pelanggan}/g, customerEmail)
+        .replace(/{pesan_custom}/g, '');
 
     return await invokeWhatsappFunction(target, message);
 }

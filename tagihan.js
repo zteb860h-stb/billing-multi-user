@@ -706,7 +706,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     .replace(/{nama_pelanggan}/g, invoice.profiles.full_name)
                     .replace(/{idpl}/g, invoice.profiles.idpl)
                     .replace(/{periode}/g, invoice.invoice_period)
-                    .replace(/{total_tagihan}/g, formatter.format(invoice.amount));
+                    .replace(/{total_tagihan}/g, formatter.format(invoice.amount))
+                    .replace(/{jumlah_dibayar}/g, formatter.format(invoice.amount_paid || 0))
+                    .replace(/{sisa_tagihan}/g, formatter.format(Math.max(0, invoice.amount - (invoice.amount_paid || 0))))
+                    .replace(/{metode_pembayaran}/g, invoice.payment_method || '-')
+                    .replace(/{app_url}/g, 'http://selinggonet.netlify.app/')
+                    .replace(/{email_pelanggan}/g, '-')
+                    .replace(/{pesan_custom}/g, '');
 
                 try {
                     // Pakai invokeWhatsappFunction jika ada atau fallback panggil supabase invoke
@@ -1203,7 +1209,13 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/{nama_pelanggan}/g, customerName)
             .replace(/{idpl}/g, customerId)
             .replace(/{total_tagihan}/g, billAmount)
-            .replace(/{periode}/g, billPeriod);
+            .replace(/{periode}/g, billPeriod)
+            .replace(/{jumlah_dibayar}/g, new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(rowData.amount_paid || 0))
+            .replace(/{sisa_tagihan}/g, new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Math.max(0, rowData.amount - (rowData.amount_paid || 0))))
+            .replace(/{metode_pembayaran}/g, rowData.payment_method || '-')
+            .replace(/{app_url}/g, 'http://selinggonet.netlify.app/')
+            .replace(/{email_pelanggan}/g, '-')
+            .replace(/{pesan_custom}/g, '');
 
         let cleanedNumber = String(whatsappNumber).replace(/[^0-9+]/g, '');
         if (!cleanedNumber.startsWith('+') && !cleanedNumber.startsWith('62')) {

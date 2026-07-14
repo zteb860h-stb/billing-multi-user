@@ -156,12 +156,6 @@ export default class AppSettings {
                     } else if (setting.setting_key === 'app_url') {
                         const input = document.getElementById('app-url-input');
                         if (input) input.value = setting.setting_value || '';
-                    } else if (setting.setting_key === 'template_payment_full') {
-                        const input = document.getElementById('template-payment-full');
-                        if (input) input.value = setting.setting_value || '';
-                    } else if (setting.setting_key === 'template_payment_installment') {
-                        const input = document.getElementById('template-payment-installment');
-                        if (input) input.value = setting.setting_value || '';
                     } else if (setting.setting_key === 'template_custom_message') {
                         const input = document.getElementById('template-custom-message');
                         if (input) input.value = setting.setting_value || '';
@@ -521,14 +515,6 @@ export default class AppSettings {
                     setting_value: document.getElementById('app-url-input').value.trim()
                 },
                 {
-                    setting_key: 'template_payment_full',
-                    setting_value: document.getElementById('template-payment-full').value
-                },
-                {
-                    setting_key: 'template_payment_installment',
-                    setting_value: document.getElementById('template-payment-installment').value
-                },
-                {
                     setting_key: 'template_custom_message',
                     setting_value: document.getElementById('template-custom-message').value
                 }
@@ -563,54 +549,6 @@ export default class AppSettings {
 
         try {
             const defaultTemplates = {
-                template_payment_full: `Konfirmasi Pembayaran LUNAS
-
-Hai Bapak/Ibu {nama_pelanggan},
-ID Pelanggan: {idpl}
-
-✅ *TAGIHAN TELAH LUNAS!*
-
-*Detail Pembayaran:*
-• Periode: *{periode}*
-• Total Tagihan: *{total_tagihan}*
-• Metode: {metode_pembayaran}
-• Status: *LUNAS*
-
-Terima kasih atas pembayaran Anda.
-
-Anda dapat melihat riwayat pembayaran dan status tagihan terbaru melalui dasbor pelanggan Anda.
-
-Login di:
-*{app_url}*
-*- Email:* {email_pelanggan}
-*- Password:* password
-
-_____________________________
-*Pesan otomatis dari Selinggonet*`,
-                template_payment_installment: `Konfirmasi Pembayaran Cicilan
-
-Hai Bapak/Ibu {nama_pelanggan},
-ID Pelanggan: {idpl}
-
-✅ *Pembayaran cicilan diterima!*
-
-*Detail Pembayaran:*
-• Periode: *{periode}*
-• Jumlah Dibayar: *{jumlah_dibayar}*
-• Metode: {metode_pembayaran}
-• Sisa Tagihan: *{sisa_tagihan}*
-
-Sisa tagihan dapat Anda lunasi sebelum jatuh tempo. Terima kasih.
-
-Anda dapat melihat riwayat pembayaran dan status tagihan terbaru melalui dasbor pelanggan Anda.
-
-Login di:
-*{app_url}*
-*- Email:* {email_pelanggan}
-*- Password:* password
-
-_____________________________
-*Pesan otomatis dari Selinggonet*`,
                 template_custom_message: `Pesan dari Admin
 
 Hai Bapak/Ibu {nama_pelanggan},
@@ -619,12 +557,10 @@ ID Pelanggan: {idpl}
 {pesan_custom}
 
 _____________________________
-*Pesan dari Selinggonet*`
+*Pesan otomatis dari Selinggonet*`
             };
 
             // Update templates in form
-            document.getElementById('template-payment-full').value = defaultTemplates.template_payment_full;
-            document.getElementById('template-payment-installment').value = defaultTemplates.template_payment_installment;
             document.getElementById('template-custom-message').value = defaultTemplates.template_custom_message;
 
             alert('✅ Template berhasil direset ke default!\n\nJangan lupa klik SIMPAN untuk menyimpan perubahan.');
