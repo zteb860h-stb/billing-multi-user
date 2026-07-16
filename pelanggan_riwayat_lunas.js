@@ -1,7 +1,7 @@
 // pelanggan_riwayat_lunas.js - Customer Payment History with Tabs
 import { supabase } from './supabase-client.js';
 import { checkAuth, requireRole } from './auth.js';
-import { getWhatsAppNumber } from './apply-settings.js';
+import { getWhatsAppNumber, getQRISInfo } from './apply-settings.js';
 
 let currentUser = null;
 let currentProfile = null;
@@ -216,6 +216,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             sessionStorage.removeItem('activeTab');
         }
         
+        applyQRISInfo();
+        await loadPaymentMethods();
         await fetchData();
     }
 
@@ -626,16 +628,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         const transferContent = document.getElementById('transfer-content');
 
         if (tab === 'qris') {
-            qrisTab.classList.add('active', 'text-indigo-600', 'border-indigo-600');
+            qrisTab.classList.add('active', 'text-[#5324e0]', 'border-[#5324e0]', 'border-b-2');
             qrisTab.classList.remove('text-gray-500');
-            transferTab.classList.remove('active', 'text-indigo-600', 'border-indigo-600');
+            transferTab.classList.remove('active', 'text-[#5324e0]', 'border-[#5324e0]', 'border-b-2');
             transferTab.classList.add('text-gray-500');
             qrisContent.classList.remove('hidden');
             transferContent.classList.add('hidden');
         } else {
-            transferTab.classList.add('active', 'text-indigo-600', 'border-indigo-600');
+            transferTab.classList.add('active', 'text-[#5324e0]', 'border-[#5324e0]', 'border-b-2');
             transferTab.classList.remove('text-gray-500');
-            qrisTab.classList.remove('active', 'text-indigo-600', 'border-indigo-600');
+            qrisTab.classList.remove('active', 'text-[#5324e0]', 'border-[#5324e0]', 'border-b-2');
             qrisTab.classList.add('text-gray-500');
             transferContent.classList.remove('hidden');
             qrisContent.classList.add('hidden');
@@ -650,7 +652,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const customerName = currentProfile ? currentProfile.full_name : currentUser.email;
         const customerIdpl = currentProfile ? currentProfile.idpl : 'N/A';
 
-        const message = `Halo Admin GARDU NETWORK, saya ingin mengkonfirmasi pembayaran tagihan:
+        const message = `Halo Admin GALAXY.NET, saya ingin mengkonfirmasi pembayaran tagihan:
 
 - *Nama:* ${customerName}
 - *ID Pelanggan:* ${customerIdpl}
@@ -664,6 +666,82 @@ Saya sudah melakukan pembayaran. Mohon untuk diverifikasi. Terima kasih.`;
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
 
         window.open(whatsappUrl, '_blank');
+    }
+
+    // ===============================================
+    // Setting and Payment Methods Data Fetching
+    // ===============================================
+    function applyQRISInfo() {
+        try {
+            const qrisInfo = getQRISInfo();
+            const qrisImage = document.getElementById('qris-image');
+            const qrisContent = document.getElementById('qris-content');
+            
+            if (qrisInfo && qrisImage) {
+                if (qrisInfo.imageUrl) {
+                    qrisImage.src = qrisInfo.imageUrl;
+                }
+            }
+            
+            if (qrisInfo && qrisInfo.showQRIS === false && qrisContent) {
+                qrisContent.classList.add('hidden');
+                console.log('QRIS hidden (show_qris = false)');
+            }
+        } catch (error) {
+            console.error('Error applying QRIS settings:', error);
+        }
+    }
+
+    async function loadPaymentMethods() {
+        try {
+            // Fetch only active payment methods
+            const { data, error } = await supabase
+                .from('payment_methods')
+                .select('*')
+                .eq('is_active', true)
+                .order('sort_order', { ascending: true });
+
+            if (error) throw error;
+
+            renderPaymentMethods(data || []);
+        } catch (error) {
+            console.error('Error loading payment methods:', error);
+            const container = document.getElementById('payment-methods-container');
+            if (container) {
+                container.innerHTML = `
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+                        <p class="text-gray-600 text-sm">Gagal memuat metode pembayaran</p>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    function renderPaymentMethods(methods) {
+        const container = document.getElementById('payment-methods-container');
+        if (!container) return;
+
+        if (methods.length === 0) {
+            container.innerHTML = `
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+                    <p class="text-gray-600 text-sm">Belum ada metode pembayaran yang tersedia.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = methods.map(method => `
+            <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border">
+                <div>
+                    <p class="font-semibold text-gray-800">${method.bank_name}</p>
+                    <p id="bank-${method.id}" class="font-mono text-gray-700">${method.account_number}</p>
+                    <p class="text-xs text-gray-500">a.n. ${method.account_holder}</p>
+                </div>
+                <button class="copy-btn p-2 rounded-md bg-blue-100 text-[#5324e0] hover:bg-blue-200" onclick="copyToClipboard('bank-${method.id}', this)">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM5 11a1 1 0 100 2h4a1 1 0 100-2H5z"></path><path fill-rule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm2-1a1 1 0 00-1 1v10a1 1 0 001 1h12a1 1 0 001-1V5a1 1 0 00-1-1H4z" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+        `).join('');
     }
 
     // ===============================================
