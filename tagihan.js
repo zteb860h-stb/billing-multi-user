@@ -619,9 +619,9 @@ document.addEventListener('DOMContentLoaded', () => {
         btnShowModal.addEventListener('click', async () => {
             const checkedBoxes = document.querySelectorAll('.broadcast-checkbox:checked');
             if (checkedBoxes.length === 0) return;
-            
+
             infoCount.textContent = checkedBoxes.length;
-            
+
             // Ambil template
             try {
                 const { data, error } = await supabase
@@ -635,7 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     textareaTemplate.value = `Informasi Tagihan WiFi Anda\n\nHai Bapak/Ibu {nama_pelanggan},\nID Pelanggan: {idpl}\n\nInformasi tagihan Bapak/Ibu bulan ini adalah:\nJumlah Tagihan: {total_tagihan}\nPeriode Tagihan: {periode}\n\nBayar tagihan Anda di salah satu rekening di bawah ini:\n- Seabank 901307925714 An. TAUFIQ AZIZ\n- BCA 3621053653 An. TAUFIQ AZIZ\n- BSI 7211806138 An. TAUFIQ AZIZ\n- Dana 089609497390 An. TAUFIQ AZIZ\n\nTerima kasih atas kepercayaan Anda menggunakan layanan kami.\n_____________________________\n*Ini adalah pesan otomatis. Jika telah membayar tagihan, abaikan pesan ini.`;
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -672,7 +672,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 await supabase
                     .from('whatsapp_settings')
                     .upsert({ setting_key: 'template_custom_message', setting_value: template }, { onConflict: 'setting_key' });
-            } catch(e) {
+            } catch (e) {
                 console.error('Failed to save template', e);
             }
 
@@ -692,7 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let i = 0; i < batchIds.length; i++) {
                 const id = batchIds[i];
                 const invoice = unpaidData.find(item => item.id === id);
-                
+
                 if (!invoice || !invoice.profiles || !invoice.profiles.whatsapp_number) {
                     skipped++;
                     continue;
@@ -728,10 +728,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         // update broadcast count in database
                         let newCount = (invoice.broadcast_count || 0) + 1;
                         await supabase.from('invoices').update({ broadcast_count: newCount }).eq('id', id);
-                        
+
                         // update local state
                         invoice.broadcast_count = newCount;
-                        
+
                         // update UI
                         const cell = document.getElementById(`broadcast-cell-${id}`);
                         if (cell) {
@@ -822,7 +822,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             invoiceList.innerHTML = `
                 <div class="flex flex-col items-center justify-center py-12 px-4">
-                    <img src="assets/no_data.png" alt="No Data" class="w-64 h-64 mb-4 opacity-80">
+                    <img src="assets/no_data.svg" alt="No Data" class="w-64 h-64 mb-4 opacity-80">
                     <p class="text-center text-gray-500 text-base font-medium">${message}</p>
                     <p class="text-center text-gray-400 text-sm mt-2">${submessage}</p>
                 </div>
@@ -851,12 +851,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const icon1Title = broadcastCount >= 1 ? 'Broadcast ke-1: Sudah dikirim' : 'Broadcast ke-1: Belum dikirim';
                 const icon2Class = broadcastCount >= 2 ? 'text-green-500' : 'text-gray-400';
                 const icon2Title = broadcastCount >= 2 ? 'Broadcast ke-2: Sudah dikirim' : 'Broadcast ke-2: Belum dikirim';
-                
+
                 const hasValidWhatsapp = item.profiles?.whatsapp_number && String(item.profiles.whatsapp_number).replace(/[^0-9]/g, '').length >= 10;
-                const checkboxHtml = hasValidWhatsapp ? 
-                    `<input type="checkbox" class="broadcast-checkbox w-4 h-4 rounded border-gray-300 text-green-500 focus:ring-green-500" value="${invoiceId}">` : 
+                const checkboxHtml = hasValidWhatsapp ?
+                    `<input type="checkbox" class="broadcast-checkbox w-4 h-4 rounded border-gray-300 text-green-500 focus:ring-green-500" value="${invoiceId}">` :
                     `<div class="w-4 h-4" title="Tidak ada nomor WA"></div>`;
-                
+
                 const waButtonHtml = hasValidWhatsapp ?
                     `<button class="whatsapp-btn flex items-center justify-center w-7 h-7 bg-green-500 hover:bg-green-600 rounded-lg transition-colors" title="Kirim WhatsApp" data-invoice-id="${invoiceId}">
                         <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488" /></svg>
@@ -1188,7 +1188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const { data } = await supabase.from('whatsapp_settings').select('setting_value').eq('setting_key', 'template_custom_message').single();
             if (data && data.setting_value) customTemplate = data.setting_value;
-        } catch(e) {}
+        } catch (e) { }
         if (!rowData || !rowData.profiles) {
             showErrorNotification('Data pelanggan tidak valid untuk mengirim WhatsApp');
             return;
